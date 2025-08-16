@@ -1,1 +1,452 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voltage Link - Admin Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --success: #4cc9f0;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 20px;
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .login-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 32px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+        }
+        
+        .login-header h2 {
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 24px;
+            position: relative;
+        }
+        
+        .login-header p {
+            opacity: 0.9;
+            font-size: 14px;
+            position: relative;
+        }
+        
+        .login-header i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: block;
+            position: relative;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .login-body {
+            padding: 32px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 14px;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background-color: #f8f9fa;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            outline: none;
+            background-color: white;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 14px;
+            color: var(--gray);
+            font-size: 18px;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        /* Notification Modal */
+        .notification-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .notification-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .notification-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .notification-modal.show .notification-content {
+            transform: translateY(0);
+        }
+        
+        .notification-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--gray-light);
+        }
+        
+        .notification-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--gray);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .notification-close:hover {
+            color: var(--danger);
+        }
+        
+        .notification-body {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .notification-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+        
+        .notification-message {
+            font-size: 16px;
+            color: var(--dark);
+            margin-bottom: 20px;
+        }
+        
+        .notification-footer {
+            padding: 15px 20px;
+            border-top: 1px solid var(--gray-light);
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .notification-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .notification-btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .notification-btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        /* Status Colors */
+        .success {
+            color: var(--success);
+        }
+        
+        .error {
+            color: var(--danger);
+        }
+        
+        .warning {
+            color: var(--warning);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <i class="fas fa-shield-alt"></i>
+            <h2>Admin Portal</h2>
+            <p>Access the Voltage Link administration system</p>
+        </div>
+        
+        <div class="login-body">
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminKey">Admin Key</label>
+                    <div class="input-with-icon">
+                        <input type="password" id="adminKey" class="form-control" placeholder="Enter admin key" required>
+                        <i class="fas fa-key input-icon"></i>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Notification Modal -->
+    <div class="notification-modal" id="notificationModal">
+        <div class="notification-content">
+            <div class="notification-header">
+                <h3 class="notification-title" id="notificationTitle">
+                    <i class="fas fa-check-circle" id="notificationIcon"></i>
+                    <span id="notificationTitleText">Success</span>
+                </h3>
+                <button class="notification-close" id="closeNotification">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="notification-body">
+                <div class="notification-icon" id="notificationLargeIcon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <p class="notification-message" id="notificationMessage">
+                    Login successful
+                </p>
+            </div>
+            <div class="notification-footer">
+                <button class="notification-btn notification-btn-primary" id="confirmNotification">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE_URL = "https://voltagelord-no-try-me-oo.hf.space";
+        
+        // Show notification modal
+        function showNotification(type, title, message) {
+            const modal = document.getElementById('notificationModal');
+            const icon = document.getElementById('notificationIcon');
+            const largeIcon = document.getElementById('notificationLargeIcon');
+            const titleText = document.getElementById('notificationTitleText');
+            const messageText = document.getElementById('notificationMessage');
+            
+            // Set notification type
+            modal.className = `notification-modal ${type}`;
+            icon.className = `fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} ${type}`;
+            largeIcon.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} ${type}"></i>`;
+            
+            // Set content
+            titleText.textContent = title;
+            messageText.textContent = message;
+            
+            // Show modal
+            modal.classList.add('show');
+        }
+        
+        // Close notification modal
+        function closeNotification() {
+            document.getElementById('notificationModal').classList.remove('show');
+        }
+        
+        // Event listeners for notification modal
+        document.getElementById('closeNotification').addEventListener('click', closeNotification);
+        document.getElementById('confirmNotification').addEventListener('click', closeNotification);
+        
+        // Admin login form submission
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const adminKey = document.getElementById('adminKey').value;
+            
+            try {
+                // Show loading state
+                const submitBtn = document.querySelector('#adminLoginForm button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+                submitBtn.disabled = true;
+                
+                // Verify admin key with the API
+                const response = await fetch(`${API_BASE_URL}/admin/users`, {
+                    headers: {
+                        'X-ADMIN-KEY': adminKey
+                    }
+                });
+                
+                // Reset button state
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                submitBtn.disabled = false;
+                
+                if (response.ok) {
+                    // Store admin key in localStorage
+                    localStorage.setItem('voltageLinkAdminKey', adminKey);
+                    
+                    // Show success notification
+                    showNotification('success', 'Login Successful', 'You are being redirected to the admin dashboard...');
+                    
+                    // Redirect to dashboard after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = 'admin-dashboard.html';
+                    }, 2000);
+                } else {
+                    const error = await response.json();
+                    showNotification('error', 'Login Failed', error.error || 'Invalid admin key');
+                }
+            } catch (error) {
+                // Reset button state
+                const submitBtn = document.querySelector('#adminLoginForm button[type="submit"]');
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                submitBtn.disabled = false;
+                
+                showNotification('error', 'Network Error', 'Failed to connect to the server. Please try again.');
+                console.error('Admin login error:', error);
+            }
+        });
+        
+        // Check if already logged in
+        window.addEventListener('DOMContentLoaded', () => {
+            const adminKey = localStorage.getItem('voltageLinkAdminKey');
+            if (adminKey) {
+                // Verify the stored key is still valid
+                fetch(`${API_BASE_URL}/admin/users`, {
+                    headers: {
+                        'X-ADMIN-KEY': adminKey
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        localStorage.removeItem('voltageLinkAdminKey');
+                    }
+                })
+                .catch(error => {
+                    console.error('Session verification error:', error);
+                });
+            }
+        });
+    </script>
+</body>
+  </html>
