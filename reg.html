@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voltage Link - Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #2ecc71;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --light: #f8f9fa;
+            --dark: #2c3e50;
+            --gray: #95a5a6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+        
+        .auth-container {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 20px;
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .auth-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .auth-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 32px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .auth-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+        }
+        
+        .auth-header h2 {
+            margin-bottom: 8px;
+            font-weight: 700;
+            font-size: 24px;
+            position: relative;
+        }
+        
+        .auth-header p {
+            opacity: 0.9;
+            font-size: 14px;
+            position: relative;
+        }
+        
+        .auth-header i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: block;
+            position: relative;
+            color: rgba(255,255,255,0.9);
+        }
+        
+        .auth-body {
+            padding: 32px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+            font-size: 14px;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 14px 16px 14px 48px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background-color: #f8f9fa;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+            outline: none;
+            background-color: white;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 14px;
+            color: var(--gray);
+            font-size: 18px;
+        }
+        
+        .password-strength {
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+        
+        .password-strength-bar {
+            height: 100%;
+            width: 0;
+            background: var(--danger);
+            transition: all 0.3s;
+        }
+        
+        .password-strength-text {
+            font-size: 12px;
+            margin-top: 4px;
+            color: var(--gray);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray);
+        }
+        
+        .auth-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Modal Notification */
+        .modal-notification {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-notification.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-notification.show .modal-content {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-header.success {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .modal-header.error {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .modal-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .modal-icon.success {
+            color: var(--secondary);
+        }
+        
+        .modal-icon.error {
+            color: var(--danger);
+        }
+        
+        .modal-message {
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .modal-footer {
+            padding: 16px 20px;
+            display: flex;
+            justify-content: center;
+            border-top: 1px solid #eee;
+        }
+        
+        .modal-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        
+        .modal-btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .modal-btn-primary:hover {
+            background: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <i class="fas fa-bolt"></i>
+            <h2>Create Account</h2>
+            <p>Join Voltage Link today</p>
+        </div>
+        
+        <div class="auth-body">
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-with-icon">
+                        <input type="text" id="username" class="form-control" placeholder="Choose a username" required>
+                        <i class="fas fa-user input-icon"></i>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <input type="password" id="password" class="form-control" placeholder="Create a password" required>
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                    <div class="password-strength">
+                        <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                    </div>
+                    <div class="password-strength-text" id="passwordStrengthText">Password strength: Very Weak</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <div class="input-with-icon">
+                        <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm your password" required>
+                        <i class="fas fa-lock input-icon"></i>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Register
+                </button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Already have an account? <a href="login.html">Login here</a></p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- API Key Modal -->
+    <div class="modal-notification" id="apiKeyModal">
+        <div class="modal-content">
+            <div class="modal-header success">
+                <h3 class="modal-title">
+                    <i class="fas fa-key"></i> Your API Key
+                </h3>
+                <button class="modal-close" id="closeApiKeyModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3>Registration Successful!</h3>
+                <p class="modal-message">Your account has been created and you've been assigned an API key.</p>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0; font-family: monospace; word-break: break-all;" id="apiKeyDisplay"></div>
+                <p><i class="fas fa-exclamation-triangle"></i> Please save this key securely. You won't see it again.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-primary" id="continueToDash">
+                    Continue to Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Error Modal -->
+    <div class="modal-notification" id="errorModal">
+        <div class="modal-content">
+            <div class="modal-header error">
+                <h3 class="modal-title">
+                    <i class="fas fa-exclamation-circle"></i> Error
+                </h3>
+                <button class="modal-close" id="closeErrorModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-icon error">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <h3 id="errorTitle">Registration Failed</h3>
+                <p class="modal-message" id="errorMessage">An error occurred during registration. Please try again.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-primary" id="dismissError">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE_URL = "https://voltagelord-no-try-me-oo.hf.space";
+        
+        // Password strength indicator
+        document.getElementById('password').addEventListener('input', function() {
+            const password = this.value;
+            const strengthBar = document.getElementById('passwordStrengthBar');
+            const strengthText = document.getElementById('passwordStrengthText');
+            
+            // Reset
+            let strength = 0;
+            strengthBar.style.width = '0%';
+            
+            // Length check
+            if (password.length >= 8) strength += 25;
+            if (password.length >= 12) strength += 25;
+            
+            // Character variety checks
+            if (/[A-Z]/.test(password)) strength += 15;
+            if (/[0-9]/.test(password)) strength += 15;
+            if (/[^A-Za-z0-9]/.test(password)) strength += 20;
+            
+            // Update UI
+            strengthBar.style.width = strength + '%';
+            
+            if (strength < 40) {
+                strengthBar.style.backgroundColor = 'var(--danger)';
+                strengthText.textContent = 'Password strength: Very Weak';
+                strengthText.style.color = 'var(--danger)';
+            } else if (strength < 70) {
+                strengthBar.style.backgroundColor = 'var(--warning)';
+                strengthText.textContent = 'Password strength: Weak';
+                strengthText.style.color = 'var(--warning)';
+            } else if (strength < 90) {
+                strengthBar.style.backgroundColor = '#f1c40f';
+                strengthText.textContent = 'Password strength: Good';
+                strengthText.style.color = '#f1c40f';
+            } else {
+                strengthBar.style.backgroundColor = 'var(--secondary)';
+                strengthText.textContent = 'Password strength: Strong';
+                strengthText.style.color = 'var(--secondary)';
+            }
+        });
+        
+        // Registration form submission
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                showError('Registration Failed', 'Passwords do not match');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store API key in localStorage
+                    localStorage.setItem('voltageLinkApiKey', data.api_key);
+                    localStorage.setItem('voltageLinkUserPlan', data.plan || 'free');
+                    
+                    // Show API key modal
+                    document.getElementById('apiKeyDisplay').textContent = data.api_key;
+                    showApiKeyModal();
+                } else {
+                    showError('Registration Failed', data.error || 'Failed to create account');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                showError('Network Error', 'Failed to connect to server. Please try again.');
+            }
+        });
+        
+        // Show API key modal
+        function showApiKeyModal() {
+            document.getElementById('apiKeyModal').classList.add('show');
+        }
+        
+        // Show error modal
+        function showError(title, message) {
+            document.getElementById('errorTitle').textContent = title;
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorModal').classList.add('show');
+        }
+        
+        // Close modals
+        document.getElementById('closeApiKeyModal').addEventListener('click', () => {
+            document.getElementById('apiKeyModal').classList.remove('show');
+        });
+        
+        document.getElementById('closeErrorModal').addEventListener('click', () => {
+            document.getElementById('errorModal').classList.remove('show');
+        });
+        
+        document.getElementById('dismissError').addEventListener('click', () => {
+            document.getElementById('errorModal').classList.remove('show');
+        });
+        
+        // Continue to dashboard
+        document.getElementById('continueToDash').addEventListener('click', () => {
+            document.getElementById('apiKeyModal').classList.remove('show');
+            window.location.href = 'dash.html';
+        });
+    </script>
+</body>
+</html>
